@@ -266,12 +266,6 @@ export default function Index({ auth, roles, users, roleStats }) {
                                                     </svg>
                                                 ) : permission.trainer}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
-                                                {permission.branch}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
-                                                {permission.participant}
-                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
