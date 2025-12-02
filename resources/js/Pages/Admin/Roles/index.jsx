@@ -272,6 +272,9 @@ export default function Index({ auth, roles, users, roleStats }) {
                                             <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
                                                 {permission.participant}
                                             </td>
+                                            <td>
+                                                Rai anak bkep
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
