@@ -13,26 +13,35 @@ class BatchController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Batch::with(['category', 'trainer', 'creator'])
+        $query = Batch::with(['category', 'trainer'])
             ->withCount('participants');
 
-        // Filter by status
+        // Apply filters
+        if ($request->has('search') && $request->search) {
+            $query->where('title', 'like', "%{$request->search}%");
+        }
+
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
 
-        // Filter by category
-        if ($request->has('category') && $request->category) {
-            $query->where('category_id', $request->category);
-        }
-
-        $batches = $query->latest()->paginate(15);
+        $batches = $query->latest()->get();
+        
+        // Calculate stats
+        $stats = [
+            'total_batches' => Batch::count(),
+            'scheduled_batches' => Batch::where('status', 'scheduled')->count(),
+            'ongoing_batches' => Batch::where('status', 'ongoing')->count(),
+            'completed_batches' => Batch::where('status', 'completed')->count(),
+        ];
+        
         $categories = TrainingCategory::all();
 
         return Inertia::render('Coordinator/Batches/Index', [
             'batches' => $batches,
             'categories' => $categories,
-            'filters' => $request->only(['status', 'category']),
+            'stats' => $stats,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
@@ -142,8 +151,7 @@ class BatchController extends Controller
         }
 
         $batch->delete();
-
-        return redirect()->route('coordinator.batches.index')
-            ->with('success', 'Batch deleted successfully.');
+        
+        return redirect()->back()->with('success', 'Batch berhasil dihapus');
     }
 }
