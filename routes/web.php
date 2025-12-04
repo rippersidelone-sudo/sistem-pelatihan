@@ -64,12 +64,6 @@ Route::middleware(['auth', 'role:master-hq'])->prefix('admin')->name('admin.')->
     // User Management
     Route::resource('users', AdminUserController::class);
     Route::patch('users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
-
-    // Role & Permission Management
-    Route::get('roles', [AdminRoleController::class, 'index'])->name('roles.index');
-    Route::get('roles/{role}', [AdminRoleController::class, 'show'])->name('roles.show');
-    Route::patch('roles/users/{user}', [AdminRoleController::class, 'update'])->name('roles.users.update');
-    Route::delete('roles/users/{user}', [AdminRoleController::class, 'destroy'])->name('roles.users.destroy');
     
     // Reports & Analytics
     Route::get('reports', [AdminDashboardController::class, 'reports'])->name('reports');
@@ -78,6 +72,15 @@ Route::middleware(['auth', 'role:master-hq'])->prefix('admin')->name('admin.')->
     // Batch Oversight
     Route::get('batches', [AdminBatchController::class, 'index'])->name('batches.index');
     Route::get('batches/{batch}', [AdminBatchController::class, 'show'])->name('batches.show');
+
+    Route::get('roles', [AdminRoleController::class, 'index'])->name('roles.index');
+    Route::get('roles/create', [AdminRoleController::class, 'create'])->name('roles.create');
+    Route::post('roles', [AdminRoleController::class, 'store'])->name('roles.store');
+    Route::get('roles/{role}', [AdminRoleController::class, 'show'])->name('roles.show');
+    Route::get('roles/{role}/edit', [AdminRoleController::class, 'edit'])->name('roles.edit');
+    Route::put('roles/{role}', [AdminRoleController::class, 'update'])->name('roles.update');
+    Route::patch('roles/users/{user}', [AdminRoleController::class, 'update'])->name('roles.users.update');
+    Route::delete('roles/users/{user}', [AdminRoleController::class, 'destroy'])->name('roles.users.destroy'); 
 });
 
 // ========================================
@@ -86,19 +89,21 @@ Route::middleware(['auth', 'role:master-hq'])->prefix('admin')->name('admin.')->
 Route::middleware(['auth', 'role:training-coordinator'])->prefix('coordinator')->name('coordinator.')->group(function () {
     Route::get('/dashboard', [CoordinatorDashboardController::class, 'index'])->name('dashboard');
     
-    // Training Categories
     Route::resource('categories', CategoryController::class);
     Route::post('categories/{category}/prerequisites', [CategoryController::class, 'attachPrerequisite'])->name('categories.prerequisites.attach');
     Route::delete('categories/{category}/prerequisites/{prerequisite}', [CategoryController::class, 'detachPrerequisite'])->name('categories.prerequisites.detach');
     
-    // Batch Management
-    Route::resource('batches', BatchController::class);
+    Route::resource('batches', BatchController::class);                    // ini sudah bikin .batches.index
     Route::patch('batches/{batch}/status', [BatchController::class, 'updateStatus'])->name('batches.status');
     
-    // Participant Management
     Route::get('participants', [ParticipantController::class, 'index'])->name('participants.index');
     Route::patch('participants/{participant}/approve', [ParticipantController::class, 'approve'])->name('participants.approve');
     Route::patch('participants/{participant}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
+
+    Route::get('attendance', fn() => Inertia::render('Coordinator/Attendance/Index'))->name('attendance.index');
+    
+    // TAMBAHKAN BARIS INI — INI YANG HILANG!
+    Route::get('reports', fn() => Inertia::render('Coordinator/Reports/Index'))->name('reports.index');
 });
 
 // ========================================

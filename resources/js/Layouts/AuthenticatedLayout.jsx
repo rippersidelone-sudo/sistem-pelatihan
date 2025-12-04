@@ -1,12 +1,13 @@
 // resources/js/Layouts/AuthenticatedLayout.jsx
 import { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import Sidebar from '@/Components/Sidebar';
+import MobileSidebar from '@/Components/MobileSidebar';
 
-export default function Authenticated({ user, header, children }) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+export default function AuthenticatedLayout({ user, header, children }) {
+    const [showMobileSidebar, setShowMobileSidebar] = useState(false);
     const { auth } = usePage().props;
     
-    // Get user from props or page props
     const currentUser = user || auth.user;
 
     // Get navigation based on role
@@ -54,41 +55,159 @@ export default function Authenticated({ user, header, children }) {
                             </svg>
                         )
                     },
+                ];
+
+            case 'training-coordinator':
+                return [
                     { 
-                        name: 'Audit Log', 
-                        href: 'admin.reports',
+                        name: 'Dashboard', 
+                        href: 'coordinator.dashboard',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Kategori Pelatihan', 
+                        href: 'coordinator.categories.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Batch Management', 
+                        href: 'coordinator.batches.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Validasi Peserta', 
+                        href: 'coordinator.participants.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Monitoring Absensi', 
+                        href: 'coordinator.attendance.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Laporan', 
+                        href: 'coordinator.reports.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        )
+                    },
+                ];
+
+            case 'trainer':
+                return [
+                    { 
+                        name: 'Dashboard', 
+                        href: 'trainer.dashboard',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'My Batches', 
+                        href: 'trainer.batches.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        )
+                    },
+                ];
+
+            case 'branch-coordinator':
+                return [
+                    { 
+                        name: 'Dashboard', 
+                        href: 'branch.dashboard',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Participants', 
+                        href: 'branch.participants.index',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Reports', 
+                        href: 'branch.reports',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        )
+                    },
+                ];
+
+            case 'participant':
+                return [
+                    { 
+                        name: 'Dashboard', 
+                        href: 'participant.dashboard',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'Browse Training', 
+                        href: 'participant.trainings.index',
                         icon: (
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         )
                     },
+                    { 
+                        name: 'My Trainings', 
+                        href: 'participant.trainings.my',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        )
+                    },
+                    { 
+                        name: 'History', 
+                        href: 'participant.history',
+                        icon: (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        )
+                    },
                 ];
-            case 'training-coordinator':
-                return [
-                    { name: 'Dashboard', href: 'coordinator.dashboard' },
-                    { name: 'Categories', href: 'coordinator.categories.index' },
-                    { name: 'Batches', href: 'coordinator.batches.index' },
-                    { name: 'Participants', href: 'coordinator.participants.index' },
-                ];
-            case 'trainer':
-                return [
-                    { name: 'Dashboard', href: 'trainer.dashboard' },
-                    { name: 'My Batches', href: 'trainer.batches.index' },
-                ];
-            case 'branch-coordinator':
-                return [
-                    { name: 'Dashboard', href: 'branch.dashboard' },
-                    { name: 'Participants', href: 'branch.participants.index' },
-                    { name: 'Reports', href: 'branch.reports' },
-                ];
-            case 'participant':
-                return [
-                    { name: 'Dashboard', href: 'participant.dashboard' },
-                    { name: 'Browse Training', href: 'participant.trainings.index' },
-                    { name: 'My Trainings', href: 'participant.trainings.my' },
-                    { name: 'History', href: 'participant.history' },
-                ];
+
             default:
                 return [];
         }
@@ -98,152 +217,37 @@ export default function Authenticated({ user, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100 flex">
-            {/* Sidebar */}
-            <div className="w-64 bg-green-600 text-white flex-shrink-0 hidden lg:block sticky top-0 h-screen">
-                <div className="h-full flex flex-col">
-                    {/* Logo/Header */}
-                    <div className="p-6 border-b border-green-700">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-green-600 font-bold text-lg">
-                                A
-                            </div>
-                            <div>
-                                <div className="font-bold text-lg">Admin HQ</div>
-                                <div className="text-xs text-green-200">HQ Curriculum Admin</div>
-                            </div>
-                        </div>
-                    </div>
+            {/* Desktop Sidebar */}
+            <Sidebar user={currentUser} navigation={navigation} />
 
-                    {/* Navigation */}
-                    <nav className="flex-1 px-4 py-6 space-y-2">
-                        {navigation.map((item) => {
-                            // Check if current route matches the menu item
-                            const isActive = route().current(item.href) || 
-                                           (item.href.includes('roles') && route().current('admin.roles.*')) ||
-                                           (item.href.includes('batches') && route().current('admin.batches.*')) ||
-                                           (item.href.includes('reports') && route().current('admin.reports*'));
-                            
-                            return (
-                                <Link
-                                    key={item.name}
-                                    href={route(item.href)}
-                                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                                        isActive
-                                            ? 'bg-white text-green-600 font-semibold'
-                                            : 'text-white hover:bg-green-700'
-                                    }`}
-                                >
-                                    {item.icon && <span>{item.icon}</span>}
-                                    <span>{item.name}</span>
-                                </Link>
-                            );
-                        })}
-                    </nav>
-
-                    {/* Logout Button */}
-                    <div className="p-4 border-t border-green-700">
-                        <Link
-                            href={route('logout')}
-                            method="post"
-                            as="button"
-                            className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white text-green-600 rounded-lg hover:bg-green-50 transition-colors font-semibold"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            <span>Logout</span>
-                        </Link>
-                    </div>
-                </div>
-            </div>
+            {/* Mobile Sidebar */}
+            <MobileSidebar 
+                user={currentUser} 
+                navigation={navigation}
+                isOpen={showMobileSidebar}
+                onClose={() => setShowMobileSidebar(false)}
+            />
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-h-screen">
-                {/* Top Navigation for Mobile */}
-                <nav className="bg-white border-b border-gray-200 lg:hidden sticky top-0 z-10">
+                {/* Mobile Top Bar */}
+                <nav className="bg-white border-b border-gray-200 lg:hidden sticky top-0 z-30 shadow-sm">
                     <div className="px-4">
                         <div className="flex justify-between h-16">
                             <div className="flex items-center">
-                                <span className="text-xl font-bold text-gray-800">
+                                <span className="text-lg font-bold text-gray-800">
                                     Training System
                                 </span>
                             </div>
 
-                            {/* Hamburger */}
-                            <div className="flex items-center">
-                                <button
-                                    onClick={() => setShowingNavigationDropdown((prev) => !prev)}
-                                    className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                                >
-                                    <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                        <path
-                                            className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M4 6h16M4 12h16M4 18h16"
-                                        />
-                                        <path
-                                            className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Responsive Navigation Menu */}
-                    <div className={(showingNavigationDropdown ? 'block' : 'hidden')}>
-                        <div className="pt-2 pb-3 space-y-1">
-                            {navigation.map((item) => {
-                                const isActive = route().current(item.href) || 
-                                               (item.href.includes('roles') && route().current('admin.roles.*')) ||
-                                               (item.href.includes('batches') && route().current('admin.batches.*')) ||
-                                               (item.href.includes('reports') && route().current('admin.reports*'));
-                                
-                                return (
-                                    <Link
-                                        key={item.name}
-                                        href={route(item.href)}
-                                        className={`block w-full ps-3 pe-4 py-2 border-l-4 text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out ${
-                                            isActive
-                                                ? 'border-green-400 text-green-700 bg-green-50'
-                                                : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300'
-                                        }`}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                );
-                            })}
-                        </div>
-
-                        {/* Responsive Settings Options */}
-                        <div className="pt-4 pb-1 border-t border-gray-200">
-                            <div className="px-4">
-                                <div className="font-medium text-base text-gray-800">{currentUser?.full_name}</div>
-                                <div className="font-medium text-sm text-gray-500">{currentUser?.email}</div>
-                            </div>
-
-                            <div className="mt-3 space-y-1">
-                                <Link
-                                    href={route('profile.edit')}
-                                    className="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
-                                >
-                                    Profile
-                                </Link>
-                                <Link
-                                    method="post"
-                                    href={route('logout')}
-                                    as="button"
-                                    className="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
-                                >
-                                    Log Out
-                                </Link>
-                            </div>
+                            <button
+                                onClick={() => setShowMobileSidebar(true)}
+                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition"
+                            >
+                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </nav>

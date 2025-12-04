@@ -1,14 +1,37 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function Index({ auth, roles, users, roleStats }) {
+export default function Index({ auth, roles, users, roleStats, filters }) {
+    const [search, setSearch] = useState(filters.search || "");
+    const [roleFilter, setRoleFilter] = useState(filters.role || "");
+
     const [showAddUserModal, setShowAddUserModal] = useState(false);
 
     const handleDeleteUser = (userId) => {
         if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
             router.delete(route('admin.roles.users.destroy', userId));
         }
+    };
+
+    const applyFilter = () => {
+        router.get(route('admin.roles.index'), {
+            search: search,
+            role: roleFilter,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const resetFilter = () => {
+        setSearch("");
+        setRoleFilter("");
+
+        router.get(route('admin.roles.index'), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const permissionMatrix = [
@@ -68,7 +91,8 @@ export default function Index({ auth, roles, users, roleStats }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {/* Role Stats Cards */}
+
+                    {/* --- Role Stats Cards --- */}
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
                         <div className="bg-white rounded-lg shadow-sm p-4">
                             <div className="flex items-center justify-between mb-2">
@@ -94,7 +118,7 @@ export default function Index({ auth, roles, users, roleStats }) {
                             <div className="flex items-center justify-between mb-2">
                                 <div className="text-sm text-gray-600">Trainer / Facilitator</div>
                                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 0 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
                             <div className="text-2xl font-bold text-gray-900">{roleStats.trainer}</div>
@@ -104,7 +128,7 @@ export default function Index({ auth, roles, users, roleStats }) {
                             <div className="flex items-center justify-between mb-2">
                                 <div className="text-sm text-gray-600">Branch PIC</div>
                                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 0 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
                             <div className="text-2xl font-bold text-gray-900">{roleStats.branch_pic}</div>
@@ -114,14 +138,69 @@ export default function Index({ auth, roles, users, roleStats }) {
                             <div className="flex items-center justify-between mb-2">
                                 <div className="text-sm text-gray-600">Participant</div>
                                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 0 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
                             <div className="text-2xl font-bold text-gray-900">{roleStats.participant}</div>
                         </div>
                     </div>
 
-                    {/* User List Table */}
+                    {/* ---------------------- FILTER BAR ---------------------- */}
+                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                            {/* Search */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Cari Nama
+                                </label>
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Cari user..."
+                                />
+                            </div>
+
+                            {/* Role Filter */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Filter Role
+                                </label>
+                                <select
+                                    value={roleFilter}
+                                    onChange={(e) => setRoleFilter(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="">Semua Role</option>
+                                    {roles.map((role) => (
+                                        <option key={role.id} value={role.id}>{role.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex items-end gap-3">
+                                <button
+                                    onClick={applyFilter}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                >
+                                    Search
+                                </button>
+
+                                <button
+                                    onClick={resetFilter}
+                                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                                >
+                                    Reset
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* ---------------------- USER LIST TABLE ---------------------- */}
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-lg font-semibold text-gray-900">Daftar User</h3>
@@ -140,25 +219,16 @@ export default function Index({ auth, roles, users, roleStats }) {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-white">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nama
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Role
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aksi
-                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
+
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {users && users.length > 0 ? users.map((user) => (
+                                    {users.data.length > 0 ? users.data.map((user) => (
                                         <tr key={user.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 {user.full_name}
@@ -171,8 +241,8 @@ export default function Index({ auth, roles, users, roleStats }) {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                                                    user.status === 'active' 
-                                                        ? 'bg-green-100 text-green-800' 
+                                                    user.status === 'active'
+                                                        ? 'bg-green-100 text-green-800'
                                                         : 'bg-red-100 text-red-800'
                                                 }`}>
                                                     {user.status}
@@ -185,15 +255,23 @@ export default function Index({ auth, roles, users, roleStats }) {
                                                         className="text-gray-600 hover:text-gray-900"
                                                     >
                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414
+                                                            a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                            />
                                                         </svg>
                                                     </Link>
+
                                                     <button
                                                         onClick={() => handleDeleteUser(user.id)}
                                                         className="text-red-600 hover:text-red-900"
                                                     >
                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5
+                                                            4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1
+                                                            1v3M4 7h16"
+                                                            />
                                                         </svg>
                                                     </button>
                                                 </div>
@@ -209,6 +287,25 @@ export default function Index({ auth, roles, users, roleStats }) {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* PAGINATION */}
+                        <div className="flex justify-between items-center mt-4 px-2">
+                            {users.links.map((link, index) => (
+                                <button
+                                    key={index}
+                                    disabled={!link.url}
+                                    onClick={() => link.url && router.visit(link.url, { preserveScroll: true })}
+                                    className={
+                                        "px-3 py-1 mx-1 rounded " +
+                                        (link.active
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300")
+                                    }
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+
                     </div>
 
                     {/* Permission Matrix */}
@@ -219,26 +316,15 @@ export default function Index({ auth, roles, users, roleStats }) {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Resource
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Admin
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Coordinator
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Trainer
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Branch PIC
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Participant
-                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resource</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Admin</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Coordinator</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trainer</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Branch PIC</th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Participant</th>
                                     </tr>
                                 </thead>
+
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {permissionMatrix.map((permission, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
@@ -272,15 +358,14 @@ export default function Index({ auth, roles, users, roleStats }) {
                                             <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
                                                 {permission.participant}
                                             </td>
-                                            <td>
-                                                Rai anak bkep
-                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </AuthenticatedLayout>

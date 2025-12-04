@@ -1,5 +1,6 @@
 <?php
 
+// app/Http/Controllers/Coordinator/DashboardController.php
 namespace App\Http\Controllers\Coordinator;
 
 use App\Http\Controllers\Controller;
@@ -19,9 +20,11 @@ class DashboardController extends Controller
             'completed_batches' => Batch::where('status', 'completed')->count(),
             'total_categories' => TrainingCategory::count(),
             'pending_registrations' => BatchParticipant::where('registration_status', 'pending')->count(),
+            'total_participants' => BatchParticipant::where('registration_status', 'approved')->distinct('user_id')->count(),
         ];
 
-        $upcomingBatches = Batch::with(['category', 'trainer', 'participants'])
+        $upcomingBatches = Batch::with(['category', 'trainer'])
+            ->withCount('participants')
             ->where('status', 'scheduled')
             ->where('start_date', '>=', now())
             ->orderBy('start_date')

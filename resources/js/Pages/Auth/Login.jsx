@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function Login({ status }) {
     const { data, setData, post, processing, errors } = useForm({
-        username: '',
+        email: '',  // FIXED: Changed from 'username' to 'email'
         password: '',
     });
 
@@ -22,7 +22,7 @@ export default function Login({ status }) {
             <div className="min-h-screen bg-[#edf7ed] flex items-center justify-center px-4 py-12">
                 <div className="w-full max-w-4xl">
 
-                    {/* Header atas - Icon toga persis seperti gambar asli */}
+                    {/* Header atas - Icon toga */}
                     <div className="text-center mb-12">
                         <div className="mx-auto w-20 h-20 bg-green-600 rounded-3xl flex items-center justify-center shadow-xl">
                             <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -32,6 +32,13 @@ export default function Login({ status }) {
                         <h1 className="mt-4 text-2xl font-bold text-gray-800">Sistem Pelatihan Guru</h1>
                         <p className="mt-1 text-gray-600">Silahkan login untuk melanjutkan</p>
                     </div>
+
+                    {/* Status Message */}
+                    {status && (
+                        <div className="mb-4 font-medium text-sm text-green-600 bg-green-50 p-3 rounded-lg text-center">
+                            {status}
+                        </div>
+                    )}
 
                     {/* Card Login */}
                     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -48,49 +55,54 @@ export default function Login({ status }) {
 
                             {/* Kanan: Form Login */}
                             <div className="md:col-span-3 p-10 lg:p-14">
-                                {/* JUDUL LOGIN SEKARANG DI TENGAH */}
                                 <h2 className="text-center text-3xl font-bold text-gray-800 mb-12">
                                     Login
                                 </h2>
 
                                 <form onSubmit={handleSubmit} className="space-y-7">
 
-                                    {/* Email */}
+                                    {/* Email - FIXED */}
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                                             Email
                                         </label>
                                         <input
-                                            type="text"
-                                            value={data.username}
-                                            onChange={(e) => setData('username', e.target.value)}
-                                            placeholder="admin@gmail.com"
-                                            className="w-full px-5 py- py-4 bg-gray-100 rounded-xl text-sm focus:outline-none focus:bg-white focus:ring-4 focus:ring-green-300 transition"
+                                            id="email"
+                                            type="email"
+                                            name="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            placeholder="admin@training.com"
+                                            className="w-full px-5 py-4 bg-gray-100 rounded-xl text-sm focus:outline-none focus:bg-white focus:ring-4 focus:ring-green-300 transition"
                                             required
+                                            autoComplete="email"
                                         />
-                                        {errors.username && (
-                                            <p className="mt-2 text-sm text-red-600">{errors.username}</p>
+                                        {errors.email && (
+                                            <p className="mt-2 text-sm text-red-600">{errors.email}</p>
                                         )}
                                     </div>
 
                                     {/* Password */}
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
                                             Password
                                         </label>
                                         <div className="relative">
                                             <input
+                                                id="password"
                                                 type={showPassword ? "text" : "password"}
+                                                name="password"
                                                 value={data.password}
                                                 onChange={(e) => setData('password', e.target.value)}
                                                 placeholder="••••••••"
                                                 className="w-full px-5 py-4 bg-gray-100 rounded-xl text-sm focus:outline-none focus:bg-white focus:ring-4 focus:ring-green-300 transition pr-14"
                                                 required
+                                                autoComplete="current-password"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute inset-y-0 right-4 flex items-center text-gray-500 hover:text-gray-700"
+                                                className="absolute inset-y-0 right-4 flex items-center text-gray-500 hover:text-gray-700 transition"
                                             >
                                                 {showPassword ? (
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,12 +125,17 @@ export default function Login({ status }) {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition"
+                                        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white font-bold text-lg py-4 rounded-xl shadow-lg transition duration-200"
                                     >
                                         {processing ? 'Memproses...' : 'Login'}
                                     </button>
 
                                 </form>
+
+                                {/* Footer Info */}
+                                <div className="mt-6 text-center text-sm text-gray-500">
+                                    <p>Tidak punya akun? Hubungi administrator Anda.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
