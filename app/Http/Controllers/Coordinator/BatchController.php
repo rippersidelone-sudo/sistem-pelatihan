@@ -48,9 +48,10 @@ class BatchController extends Controller
     public function create()
     {
         $categories = TrainingCategory::all();
+        
         $trainers = User::whereHas('role', fn($q) => $q->where('slug', 'trainer'))
             ->where('status', 'active')
-            ->get();
+            ->get(['id', 'full_name', 'email']); // Pastikan select field yang diperlukan
 
         return Inertia::render('Coordinator/Batches/Create', [
             'categories' => $categories,
@@ -65,14 +66,21 @@ class BatchController extends Controller
             'category_id' => 'required|exists:training_categories,id',
             'trainer_id' => 'required|exists:users,id',
             'start_date' => 'required|date|after:now',
+            'start_time' => 'required|date_format:H:i',
             'end_date' => 'required|date|after:start_date',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'min_participants' => 'nullable|integer|min:0',
             'max_participants' => 'required|integer|min:1|max:100',
             'zoom_link' => 'nullable|url',
             'assignment_description' => 'nullable|string',
         ]);
 
-        $validated['created_by'] = auth()->id();
+        $userId = auth()->id();
+        if (!$userId) {
+            return redirect()->back()->withErrors(['auth' => 'Session Anda telah habis. Silakan login ulang untuk membuat batch.']);
+        }
+
+        $validated['created_by'] = $userId;
         $validated['status'] = 'scheduled';
 
         Batch::create($validated);
@@ -101,9 +109,10 @@ class BatchController extends Controller
     public function edit(Batch $batch)
     {
         $categories = TrainingCategory::all();
+        
         $trainers = User::whereHas('role', fn($q) => $q->where('slug', 'trainer'))
             ->where('status', 'active')
-            ->get();
+            ->get(['id', 'full_name', 'email']); // Sama untuk edit
 
         return Inertia::render('Coordinator/Batches/Edit', [
             'batch' => $batch->load('category', 'trainer'),
@@ -119,7 +128,9 @@ class BatchController extends Controller
             'category_id' => 'required|exists:training_categories,id',
             'trainer_id' => 'required|exists:users,id',
             'start_date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
             'end_date' => 'required|date|after:start_date',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'min_participants' => 'nullable|integer|min:0',
             'max_participants' => 'required|integer|min:1|max:100',
             'zoom_link' => 'nullable|url',

@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\TrainingCategory;
 
 class Batch extends Model
 {
@@ -18,78 +17,65 @@ class Batch extends Model
         'trainer_id',
         'start_date',
         'end_date',
-        'min_participants',
+        'start_time',
+        'end_time',
         'max_participants',
+        'min_participants',
         'zoom_link',
-        'assignment_description',
         'status',
+        'description',
         'created_by',
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
-    public function category(): BelongsTo
+    /**
+     * Relasi ke TrainingCategory (Kategori Pelatihan)
+     */
+    public function category()
     {
         return $this->belongsTo(TrainingCategory::class, 'category_id');
     }
 
-    public function trainer(): BelongsTo
+    /**
+     * Relasi ke Trainer (User)
+     */
+    public function trainer()
     {
         return $this->belongsTo(User::class, 'trainer_id');
     }
 
-    public function creator(): BelongsTo
+    /**
+     * Relasi ke BatchParticipant (One to Many)
+     */
+    public function participants()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->hasMany(BatchParticipant::class);
     }
 
-    public function participants(): BelongsToMany
+    /**
+     * Get approved participants only
+     */
+    public function approvedParticipants()
     {
-        return $this->belongsToMany(User::class, 'batch_participants')
-            ->withPivot('registration_status', 'completion_status', 'notes')
-            ->withTimestamps();
+        return $this->participants()->where('registration_status', 'approved');
     }
 
-    public function attendances(): HasMany
+    /**
+     * Count participants
+     */
+    public function getParticipantsCountAttribute()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->participants()->count();
     }
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(Submission::class);
-    }
-
-    public function materials(): HasMany
-    {
-        return $this->hasMany(Material::class);
-    }
-
-    public function feedbacks(): HasMany
-    {
-        return $this->hasMany(Feedback::class);
-    }
-
-    // Helper methods
-    public function isScheduled(): bool
-    {
-        return $this->status === 'scheduled';
-    }
-
-    public function isOngoing(): bool
-    {
-        return $this->status === 'ongoing';
-    }
-
-    public function isCompleted(): bool
-    {
-        return $this->status === 'completed';
-    }
-
-    public function isFull(): bool
+    /**
+     * Check if batch is full
+     */
+    public function isFull()
     {
         return $this->participants()->count() >= $this->max_participants;
     }

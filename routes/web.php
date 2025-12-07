@@ -18,6 +18,8 @@ use App\Http\Controllers\Coordinator\DashboardController as CoordinatorDashboard
 use App\Http\Controllers\Coordinator\CategoryController;
 use App\Http\Controllers\Coordinator\BatchController;
 use App\Http\Controllers\Coordinator\ParticipantController;
+use App\Http\Controllers\Coordinator\AttendanceController as CoordinatorAttendanceController;
+use App\Http\Controllers\Coordinator\ReportsController;
 
 // Trainer Controllers
 use App\Http\Controllers\Trainer\DashboardController as TrainerDashboardController;
@@ -86,24 +88,37 @@ Route::middleware(['auth', 'role:master-hq'])->prefix('admin')->name('admin.')->
 // ========================================
 // COORDINATOR ROUTES
 // ========================================
-Route::middleware(['auth', 'role:training-coordinator'])->prefix('coordinator')->name('coordinator.')->group(function () {
-    Route::get('/dashboard', [CoordinatorDashboardController::class, 'index'])->name('dashboard');
-    
-    Route::resource('categories', CategoryController::class);
-    Route::post('categories/{category}/prerequisites', [CategoryController::class, 'attachPrerequisite'])->name('categories.prerequisites.attach');
-    Route::delete('categories/{category}/prerequisites/{prerequisite}', [CategoryController::class, 'detachPrerequisite'])->name('categories.prerequisites.detach');
-    
-    Route::resource('batches', BatchController::class);                    // ini sudah bikin .batches.index
-    Route::patch('batches/{batch}/status', [BatchController::class, 'updateStatus'])->name('batches.status');
-    
-    Route::get('participants', [ParticipantController::class, 'index'])->name('participants.index');
-    Route::patch('participants/{participant}/approve', [ParticipantController::class, 'approve'])->name('participants.approve');
-    Route::patch('participants/{participant}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
+Route::middleware(['auth', 'role:training-coordinator'])
+    ->prefix('coordinator')
+    ->name('coordinator.')
+    ->group(function () {
 
-    Route::get('attendance', fn() => Inertia::render('Coordinator/Attendance/Index'))->name('attendance.index');
-    
-    // TAMBAHKAN BARIS INI — INI YANG HILANG!
-    Route::get('reports', fn() => Inertia::render('Coordinator/Reports/Index'))->name('reports.index');
+    // Dashboard
+    Route::get('/dashboard', [CoordinatorDashboardController::class, 'index'])
+        ->name('dashboard');
+
+    // Kategori & Batch
+    Route::resource('categories', CategoryController::class);
+    Route::resource('batches', BatchController::class);
+    Route::patch('batches/{batch}/status', [BatchController::class, 'updateStatus'])
+        ->name('batches.status');
+
+    // Peserta
+    Route::prefix('participants')->name('participants.')->group(function () {
+        Route::get('/', [ParticipantController::class, 'index'])->name('index');
+        Route::patch('{participant}/approve', [ParticipantController::class, 'approve'])->name('approve');
+        Route::patch('{participant}/reject',  [ParticipantController::class, 'reject'])->name('reject');
+    });
+
+    // Attendance monitoring
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        Route::get('/', [CoordinatorAttendanceController::class, 'index'])->name('index');
+        Route::post('{id}/validate', [CoordinatorAttendanceController::class, 'validate'])->name('validate');
+        Route::post('{id}/reject', [CoordinatorAttendanceController::class, 'reject'])->name('reject');
+    });
+
+    // Reports
+    Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
 });
 
 // ========================================

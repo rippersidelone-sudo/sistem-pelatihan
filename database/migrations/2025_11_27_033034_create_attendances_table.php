@@ -6,20 +6,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_id')->constrained('batches')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->dateTime('check_in_time')->nullable();
-            $table->enum('status', ['pending', 'present', 'absent'])->default('pending');
-            $table->foreignId('validated_by')->nullable()->constrained('users')->onDelete('set null'); // Trainer
-            $table->dateTime('validated_at')->nullable();
+            $table->foreignId('batch_participant_id')->constrained('batch_participants')->onDelete('cascade');
+            $table->timestamp('check_in_time')->nullable();
+            $table->enum('status', ['absent', 'checked_in', 'validated'])->default('absent');
+            $table->text('notes')->nullable();
+            $table->foreignId('validated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('validated_at')->nullable();
             $table->timestamps();
+
+            // Index untuk performa
+            $table->index('batch_participant_id');
+            $table->index('status');
+            $table->index('check_in_time');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('attendances');

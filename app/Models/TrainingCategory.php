@@ -14,17 +14,25 @@ class TrainingCategory extends Model
 
     protected $fillable = ['name', 'description', 'created_by'];
 
+    /**
+     * Relasi ke User (Creator)
+     */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * Relasi ke Batch
+     */
     public function batches(): HasMany
     {
         return $this->hasMany(Batch::class, 'category_id');
     }
 
-    // Prerequisites (kategori yang harus diselesaikan sebelum mengambil kategori ini)
+    /**
+     * Kategori yang HARUS diselesaikan sebelum mengambil kategori ini
+     */
     public function prerequisites(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -35,8 +43,10 @@ class TrainingCategory extends Model
         )->withTimestamps();
     }
 
-    // Kategori yang memiliki kategori ini sebagai prerequisite
-    public function dependentCategories(): BelongsToMany
+    /**
+     * Kategori yang MENJADIKAN kategori ini sebagai syarat (prerequisite)
+     */
+    public function prerequisiteFor(): BelongsToMany
     {
         return $this->belongsToMany(
             TrainingCategory::class,
@@ -44,5 +54,21 @@ class TrainingCategory extends Model
             'prerequisite_id',
             'category_id'
         )->withTimestamps();
+    }
+
+    /**
+     * Check if category has prerequisites
+     */
+    public function hasPrerequisites(): bool
+    {
+        return $this->prerequisites()->exists();
+    }
+
+    /**
+     * Check if category is prerequisite for other categories
+     */
+    public function isPrerequisiteFor(): bool
+    {
+        return $this->prerequisiteFor()->exists();
     }
 }

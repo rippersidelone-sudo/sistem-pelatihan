@@ -1,42 +1,42 @@
-// resources/js/Pages/Coordinator/Batches/Create.jsx
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
 
-export default function Create({ auth, categories, trainers }) {
+export default function Edit({ auth, batch, categories, trainers }) {
     const formatTime = (t) => t ? t.slice(0,5) : '';
-    const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        category_id: '',
-        trainer_id: '',
-        start_date: '',
-        start_time: '',
-        end_date: '',
-        end_time: '',
-        min_participants: '',
-        max_participants: '',
-        zoom_link: '',
-        assignment_description: '',
+    const { data, setData, put, processing, errors } = useForm({
+        title: batch.title || '',
+        category_id: batch.category_id || '',
+        trainer_id: batch.trainer_id || '',
+        start_date: batch.start_date || '',
+        start_time: formatTime(batch.start_time),
+        end_date: batch.end_date || '',
+        end_time: formatTime(batch.end_time),
+        min_participants: batch.min_participants || '',
+        max_participants: batch.max_participants || 30,
+        zoom_link: batch.zoom_link || '',
+        assignment_description: batch.assignment_description || '',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('coordinator.batches.store'));
+        put(route('coordinator.batches.update', batch.id));
     };
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Tambah Batch Baru" />
+            <Head title="Edit Batch" />
 
             <div className="py-8">
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                        {/* Header - Sama persis dengan Create Category */}
+
+                        {/* HEADER – SAMA PERSIS DENGAN CREATE (HIJAU GRADIENT) */}
                         <div className="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white">Tambah Batch Baru</h2>
+                                    <h2 className="text-2xl font-bold text-white">Edit Batch</h2>
                                     <p className="text-green-100 text-sm mt-1">
-                                        Buat batch pelatihan baru untuk kategori tertentu
+                                        Ubah detail batch pelatihan
                                     </p>
                                 </div>
                                 <Link
@@ -50,8 +50,9 @@ export default function Create({ auth, categories, trainers }) {
                             </div>
                         </div>
 
-                        {/* Form - Layout & style 100% sama */}
+                        {/* FORM – 100% SAMA DENGAN CREATE */}
                         <form onSubmit={handleSubmit} className="p-8 space-y-6">
+
                             {/* Judul Batch */}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -151,7 +152,7 @@ export default function Create({ auth, categories, trainers }) {
                                     </label>
                                     <input
                                         type="time"
-                                        value={formatTime(data.start_time)}
+                                        value={data.start_time}
                                         onChange={(e) => setData('start_time', e.target.value)}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                                         required
@@ -164,7 +165,7 @@ export default function Create({ auth, categories, trainers }) {
                                     </label>
                                     <input
                                         type="time"
-                                        value={formatTime(data.end_time)}
+                                        value={data.end_time}
                                         onChange={(e) => setData('end_time', e.target.value)}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                                         required
@@ -236,15 +237,15 @@ export default function Create({ auth, categories, trainers }) {
                                 {errors.assignment_description && <p className="mt-2 text-sm text-red-600">{errors.assignment_description}</p>}
                             </div>
 
-                            {/* Info Box - Sama seperti di Create Category */}
+                            {/* Info Box */}
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                 <div className="flex items-start">
                                     <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <div className="ml-3 text-sm text-blue-800">
-                                        <p className="font-semibold mb-1">Informasi Batch</p>
-                                        <p>Pastikan semua data terisi dengan benar. Batch yang sudah memiliki peserta tidak dapat dihapus.</p>
+                                        <p className="font-semibold mb-1">Perhatian</p>
+                                        <p>Perubahan pada batch akan langsung berlaku untuk semua peserta terdaftar.</p>
                                     </div>
                                 </div>
                             </div>
@@ -271,7 +272,7 @@ export default function Create({ auth, categories, trainers }) {
                                             Menyimpan...
                                         </span>
                                     ) : (
-                                        'Simpan Batch'
+                                        'Simpan Perubahan'
                                     )}
                                 </button>
                             </div>
