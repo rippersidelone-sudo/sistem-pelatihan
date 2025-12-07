@@ -2,29 +2,47 @@
 import { Link, usePage } from '@inertiajs/react';
 
 export default function Sidebar({ user, navigation }) {
-    const { url } = usePage(); // pakai url, lebih akurat daripada route().current()
+    const { url } = usePage(); 
 
     const isActive = (href) => {
-        // Kalau exact match
-        if (url === route(href)) return true;
+    if (!href) return false;
 
-        // Kalau route punya sub-route (contoh: coordinator.batches.create, edit, show, dll)
+    try {
+        const current = route().current();
+
+        if (current === href) return true;
+
         if (href === 'coordinator.batches.index') {
-            return url.startsWith('/coordinator/batches') || 
-                   route().current().startsWith('coordinator.batches.');
+            return current?.startsWith('coordinator.batches');
         }
 
-        // Untuk menu lain yang punya sub-route (categories, participants, dll)
-        const routeName = route().current();
-        return routeName === href || routeName.startsWith(href + '.');
-    };
+        if (href === 'coordinator.categories.index') {
+            return current?.startsWith('coordinator.categories');
+        }
+
+        if (href === 'coordinator.participants.index') {
+            return current?.startsWith('coordinator.participants');
+        }
+
+        if (href === 'coordinator.attendance.monitor') {
+            return current === 'coordinator.attendance.monitor';
+        }
+        if (href === 'coordinator.reports.dashboard') {
+            return current === 'coordinator.reports.dashboard';
+        }
+
+        return current?.startsWith(href + '.');
+    } catch (e) {
+        return false;
+    }
+};
 
     const roleInfo = {
-        'master-hq': { title: 'Master HQ', initial: 'MH', subtitle: 'Administrator' },
-        'training-coordinator': { title: 'Koordinator', initial: 'KC', subtitle: 'Training Coordinator' },
-        'trainer': { title: 'Trainer', initial: 'TR', subtitle: 'Pengajar' },
-        'branch-coordinator': { title: 'Branch Coord', initial: 'BC', subtitle: 'Koordinator Cabang' },
-        'participant': { title: user?.name?.[0] || 'P', initial: 'PT', subtitle: 'Peserta' },
+        'master-hq': { title: 'Master HQ', initial: 'A', subtitle: 'Administrator' },
+        'training-coordinator': { title: 'Koordinator Pelatihan', initial: 'K', subtitle: 'Training Coordinator' },
+        'trainer': { title: 'Trainer', initial: 'T', subtitle: 'Pengajar' },
+        'branch-coordinator': { title: 'Branch Coord', initial: 'B', subtitle: 'Koordinator Cabang' },
+        'participant': { title: user?.name?.[0] || 'P', initial: 'P', subtitle: 'Peserta' },
     };
 
     const info = roleInfo[user?.role?.slug] || { title: 'User', initial: 'U', subtitle: '' };
@@ -34,7 +52,7 @@ export default function Sidebar({ user, navigation }) {
             {/* Header */}
             <div className="p-6 border-b border-green-700">
                 <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                    <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
                         <span className="text-green-600">{info.initial}</span>
                     </div>
                     <div>

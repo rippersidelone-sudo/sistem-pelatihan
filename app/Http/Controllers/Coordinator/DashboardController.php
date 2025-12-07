@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/Coordinator/DashboardController.php
 namespace App\Http\Controllers\Coordinator;
 
 use App\Http\Controllers\Controller;

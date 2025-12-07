@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BatchParticipant extends Model
 {
@@ -15,16 +14,47 @@ class BatchParticipant extends Model
         'user_id',
         'registration_status',
         'completion_status',
+        'feedback',
         'notes',
     ];
 
-    public function batch(): BelongsTo
+    /**
+     * Relasi ke Batch
+     */
+    public function batch()
     {
         return $this->belongsTo(Batch::class);
     }
 
-    public function user(): BelongsTo
+    /**
+     * Relasi ke User (Participant)
+     */
+    public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relasi ke Attendance (One to Many)
+     */
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Check if participant is approved
+     */
+    public function isApproved()
+    {
+        return $this->registration_status === 'approved';
+    }
+
+    /**
+     * Check if participant has completed the training
+     */
+    public function hasCompleted()
+    {
+        return $this->completion_status === 'passed';
     }
 }

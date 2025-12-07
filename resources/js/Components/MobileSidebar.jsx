@@ -45,7 +45,7 @@ export default function MobileSidebar({ user, navigation, isOpen, onClose }) {
                     <div className="p-6 border-b border-green-700">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-lg">
+                                <div className="w-14 h-10 bg-white rounded-full flex items-center justify-center font-bold text-lg">
                                     <span className="text-green-600">{roleInfo.initial}</span>
                                 </div>
                                 <div className="font-bold text-base">{roleInfo.title}</div>
